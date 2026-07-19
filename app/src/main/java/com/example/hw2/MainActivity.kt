@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalGridApi
@@ -25,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +34,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -62,8 +65,18 @@ class MainActivity : ComponentActivity() {
 fun HW2App() {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { CenterAlignedTopAppBar(
-            title= { Text(stringResource(R.string.app_name)) }
+        topBar = {
+            CenterAlignedTopAppBar(
+                title= {
+                    Text(
+                        text = stringResource(R.string.app_name),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = colorResource(R.color.teal_200), // Background color
+                    titleContentColor = MaterialTheme.colorScheme.primary // Text color
+                )
             )
         }
     ) { innerPadding ->
@@ -76,23 +89,16 @@ fun HW2App() {
             Text_View(
                 modifier = Modifier
             )
-
             if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 // Landscape: Side-by-side
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-//                        .width(IntrinsicSize.Min)
-                ) {
+                Row {
                     AppCalculator(Modifier.fillMaxWidth(.5f))
                     AppCalendar(LocalDate.now(), Modifier.fillMaxWidth())
                 }
             } else {
                 // Portrait: Stacked
-                Column(modifier = Modifier.fillMaxSize()) {
-                    AppCalculator(Modifier.fillMaxWidth())
-                    AppCalendar(LocalDate.now(),Modifier.fillMaxWidth())
-                }
+                AppCalculator(Modifier.aspectRatio(1f))
+                AppCalendar(LocalDate.now())
             }
         }
     }
@@ -106,7 +112,7 @@ fun Text_View(modifier: Modifier = Modifier){
             .fillMaxWidth()
             .drawBehind {
                 drawLine(
-                    color = Color.LightGray,
+                    color = Color.Gray,
                     strokeWidth = 2.dp.toPx(),
                     start = Offset(0.0f, size.height),
                     end = Offset(size.width, size.height)
@@ -118,6 +124,8 @@ fun Text_View(modifier: Modifier = Modifier){
             text = stringResource(R.string.txt_view),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.primary,
+            fontWeight = FontWeight.Bold,
             modifier = modifier
                 .fillMaxWidth()
                 .padding(2.dp)
@@ -130,9 +138,7 @@ fun Text_View(modifier: Modifier = Modifier){
 fun AppCalculator(modifier: Modifier = Modifier) {
     val keys = stringArrayResource(R.array.calc_keys)
     Box (
-        modifier = modifier
-            .aspectRatio(1f),
-//            .padding(8.dp)
+        modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
         Grid (
@@ -146,6 +152,7 @@ fun AppCalculator(modifier: Modifier = Modifier) {
                 onValueChange = {},
                 readOnly = true,
                 modifier = Modifier
+                    .border(2.dp, MaterialTheme.colorScheme.primary)
                     .gridItem(row = 1, column = 1, columnSpan = 4)
                     .fillMaxWidth()
             )
@@ -208,14 +215,13 @@ fun AppCalendar(localDate: LocalDate, modifier: Modifier = Modifier) {
     val calTitle = arrayOf("<", YearMonth.from(localDate).toString(), ">")
 
     Box(
-        modifier = modifier.aspectRatio(1f)
+        modifier = modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center
     ) {
         // Calendar Grid Layout
         Grid(
             modifier = Modifier
-//            .aspectRatio(1f)
-//            .border(2.dp, Color.Black)
-            .fillMaxWidth(),
+                .fillMaxWidth(),
             config = { repeat(7) { column(7.fr) } } // 7 columns each 1/7 of width
         ) {
             calTitle.forEachIndexed { index, text ->
@@ -228,7 +234,6 @@ fun AppCalendar(localDate: LocalDate, modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .then(spanModifier)
                         .fillMaxSize(),
-//                    .padding(top=8.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -237,6 +242,8 @@ fun AppCalendar(localDate: LocalDate, modifier: Modifier = Modifier) {
                         style = MaterialTheme.typography.titleMedium.copy(
                             lineHeight = MaterialTheme.typography.titleMedium.fontSize // Match font size and line height
                         ),
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -265,14 +272,7 @@ fun AppCalendar(localDate: LocalDate, modifier: Modifier = Modifier) {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DayCell(date: LocalDate?, isSelected: Boolean) {
-    Box(
-        modifier = Modifier
-//            .fillMaxWidth()
-//            .background(
-//                color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
-//                shape = CircleShape
-//            ),
-    ) {
+    Box {
         if (date != null) {
             Text(
                 modifier = Modifier
