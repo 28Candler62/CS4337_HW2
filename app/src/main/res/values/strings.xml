@@ -1,4 +1,21 @@
 <resources>
     <string name="app_name">HW2</string>
     <string name="txt_view">HW2 by John Candler</string>
+    <string name="weekDay1">Mon</string>
+    <string name="weekDay2">Tue</string>
+    <string name="weekDay3">Wed</string>
+    <string name="weekDay4">Thur</string>
+    <string name="weekDay5">Fri</string>
+    <string name="weekDay6">Sat</string>
+    <string name="weekDay7">Sun</string>
+
+    <string-array name="weekDays">
+        <item>@string/weekDay1</item>
+        <item>@string/weekDay2</item>
+        <item>@string/weekDay3</item>
+        <item>@string/weekDay4</item>
+        <item>@string/weekDay5</item>
+        <item>@string/weekDay6</item>
+        <item>@string/weekDay7</item>
+    </string-array>
 </resources>
