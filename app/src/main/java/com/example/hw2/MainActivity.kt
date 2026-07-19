@@ -1,5 +1,6 @@
 package com.example.hw2
 
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -7,11 +8,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalGridApi
 import androidx.compose.foundation.layout.Grid
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,11 +31,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import com.example.hw2.ui.theme.HW2Theme
@@ -60,7 +62,10 @@ class MainActivity : ComponentActivity() {
 fun HW2App() {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { CenterAlignedTopAppBar(title= { Text(stringResource(R.string.app_name)) }) }
+        topBar = { CenterAlignedTopAppBar(
+            title= { Text(stringResource(R.string.app_name)) }
+            )
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -71,8 +76,24 @@ fun HW2App() {
             Text_View(
                 modifier = Modifier
             )
-            AppCalculator()
-            AppCalendar(LocalDate.now())
+
+            if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                // Landscape: Side-by-side
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+//                        .width(IntrinsicSize.Min)
+                ) {
+                    AppCalculator(Modifier.fillMaxWidth(.5f))
+                    AppCalendar(LocalDate.now(), Modifier.fillMaxWidth())
+                }
+            } else {
+                // Portrait: Stacked
+                Column(modifier = Modifier.fillMaxSize()) {
+                    AppCalculator(Modifier.fillMaxWidth())
+                    AppCalendar(LocalDate.now(),Modifier.fillMaxWidth())
+                }
+            }
         }
     }
 }
@@ -106,12 +127,13 @@ fun Text_View(modifier: Modifier = Modifier){
 
 @OptIn(ExperimentalGridApi::class)
 @Composable
-fun AppCalculator() {
+fun AppCalculator(modifier: Modifier = Modifier) {
     val keys = stringArrayResource(R.array.calc_keys)
     Box (
-        modifier = Modifier
+        modifier = modifier
+            .aspectRatio(1f),
 //            .padding(8.dp)
-
+        contentAlignment = Alignment.Center
     ) {
         Grid (
             modifier = Modifier
@@ -180,57 +202,62 @@ fun getDaysOfMonth(yearMonth: YearMonth): List<LocalDate?> {
 @OptIn(ExperimentalGridApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppCalendar(localDate: LocalDate) {
+fun AppCalendar(localDate: LocalDate, modifier: Modifier = Modifier) {
     val days: List<LocalDate?> = getDaysOfMonth(YearMonth.from(localDate))
     val weekDays = stringArrayResource(R.array.weekDays)
     val calTitle = arrayOf("<", YearMonth.from(localDate).toString(), ">")
 
-    // Calendar Grid Layout
-    Grid(
-        modifier = Modifier
+    Box(
+        modifier = modifier.aspectRatio(1f)
+    ) {
+        // Calendar Grid Layout
+        Grid(
+            modifier = Modifier
+//            .aspectRatio(1f)
 //            .border(2.dp, Color.Black)
             .fillMaxWidth(),
-        config = { repeat(7) { column(7.fr) } } // 7 columns each 1/7 of width
-    ) {
-        calTitle.forEachIndexed { index, text ->
-            val spanModifier = if (index == 1) {
-                Modifier.gridItem(columnSpan = 5)
-            } else {
-                Modifier
-            }
-            Box(
-                modifier = Modifier
-                    .then(spanModifier)
-                    .fillMaxSize(),
+            config = { repeat(7) { column(7.fr) } } // 7 columns each 1/7 of width
+        ) {
+            calTitle.forEachIndexed { index, text ->
+                val spanModifier = if (index == 1) {
+                    Modifier.gridItem(columnSpan = 5)
+                } else {
+                    Modifier
+                }
+                Box(
+                    modifier = Modifier
+                        .then(spanModifier)
+                        .fillMaxSize(),
 //                    .padding(top=8.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    textAlign = TextAlign.Center,
-                    text = text,
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        lineHeight = MaterialTheme.typography.titleMedium.fontSize // Match font size and line height
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                )
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        textAlign = TextAlign.Center,
+                        text = text,
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            lineHeight = MaterialTheme.typography.titleMedium.fontSize // Match font size and line height
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
-        }
-        weekDays.forEach { day ->
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    modifier = Modifier.padding(start = 8.dp, end = 8.dp),
-                    textAlign = TextAlign.Center,
-                    text = day,
-                    fontWeight = FontWeight.Bold
-                )
+            weekDays.forEach { day ->
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+                        textAlign = TextAlign.Center,
+                        text = day,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
-        }
 
-        days.forEach { date ->
-            DayCell(date = date, isSelected = date == localDate)
+            days.forEach { date ->
+                DayCell(date = date, isSelected = date == localDate)
+            }
         }
     }
 }
