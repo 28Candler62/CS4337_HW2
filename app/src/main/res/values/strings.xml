@@ -1,10 +1,31 @@
 <resources>
     <string name="app_name">HW2</string>
     <string name="txt_view">HW2 by John Candler</string>
+    <string-array name="calc_keys">
+        <item>MC</item>
+        <item>M+</item>
+        <item>/</item>
+        <item>X</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>-</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>+</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>=</item>
+        <item>0</item>
+        <item>.</item>
+    </string-array>
+
     <string name="weekDay1">Mon</string>
     <string name="weekDay2">Tue</string>
     <string name="weekDay3">Wed</string>
-    <string name="weekDay4">Thur</string>
+    <string name="weekDay4">Thu</string>
     <string name="weekDay5">Fri</string>
     <string name="weekDay6">Sat</string>
     <string name="weekDay7">Sun</string>

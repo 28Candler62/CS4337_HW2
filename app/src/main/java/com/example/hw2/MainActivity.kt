@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalGridApi
 import androidx.compose.foundation.layout.Grid
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,16 +20,20 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import com.example.hw2.ui.theme.HW2Theme
@@ -66,6 +71,7 @@ fun HW2App() {
             Text_View(
                 modifier = Modifier
             )
+            AppCalculator()
             AppCalendar(LocalDate.now())
         }
     }
@@ -73,12 +79,85 @@ fun HW2App() {
 
 @Composable
 fun Text_View(modifier: Modifier = Modifier){
-    Text(
-        text = stringResource(R.string.txt_view),
-        textAlign = TextAlign.Center,
-        style = MaterialTheme.typography.titleMedium,
-        modifier = modifier.fillMaxWidth()
-    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .drawBehind {
+                drawLine(
+                    color = Color.LightGray,
+                    strokeWidth = 2.dp.toPx(),
+                    start = Offset(0.0f, size.height),
+                    end = Offset(size.width, size.height)
+                )
+            },
+        contentAlignment = Alignment.Center
+    ){
+        Text(
+            text = stringResource(R.string.txt_view),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(2.dp)
+        )
+    }
+}
+
+@OptIn(ExperimentalGridApi::class)
+@Composable
+fun AppCalculator() {
+    val keys = stringArrayResource(R.array.calc_keys)
+    Box (
+        modifier = Modifier
+//            .padding(8.dp)
+
+    ) {
+        Grid (
+            modifier = Modifier
+                .padding(4.dp)
+                .fillMaxWidth(),
+            config = {repeat(4) { column(4.fr)} } // 4 columns each 1/4 of width
+        ){
+            OutlinedTextField(
+                value="",
+                onValueChange = {},
+                readOnly = true,
+                modifier = Modifier
+                    .gridItem(row = 1, column = 1, columnSpan = 4)
+                    .fillMaxWidth()
+            )
+            keys.forEachIndexed { index, key ->
+                val spanModifier = when (index) {
+                    15 -> {
+                        Modifier.gridItem(row = 5, column = 4, rowSpan = 3).fillMaxHeight()
+                    }
+                    16 -> {
+                        Modifier.gridItem(row = 6, column = 1, columnSpan = 2)
+                    }
+                    else -> {
+                        Modifier
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .then(spanModifier)
+                        .fillMaxWidth()
+                        .padding(4.dp)
+                        .background(Color.LightGray),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        modifier = Modifier.padding(8.dp),
+                        textAlign = TextAlign.Center,
+                        text = key,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+    }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -104,47 +183,54 @@ fun getDaysOfMonth(yearMonth: YearMonth): List<LocalDate?> {
 fun AppCalendar(localDate: LocalDate) {
     val days: List<LocalDate?> = getDaysOfMonth(YearMonth.from(localDate))
     val weekDays = stringArrayResource(R.array.weekDays)
+    val calTitle = arrayOf("<", YearMonth.from(localDate).toString(), ">")
 
-    Column(
+    // Calendar Grid Layout
+    Grid(
         modifier = Modifier
-            .border(2.dp, Color.Black)
+//            .border(2.dp, Color.Black)
+            .fillMaxWidth(),
+        config = { repeat(7) { column(7.fr) } } // 7 columns each 1/7 of width
     ) {
-        // Title
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                textAlign = TextAlign.Center,
-                text = YearMonth.from(localDate).toString(),
-                style = MaterialTheme.typography.titleMedium,
+        calTitle.forEachIndexed { index, text ->
+            val spanModifier = if (index == 1) {
+                Modifier.gridItem(columnSpan = 5)
+            } else {
+                Modifier
+            }
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(all=4.dp),
-            )
+                    .then(spanModifier)
+                    .fillMaxSize(),
+//                    .padding(top=8.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    textAlign = TextAlign.Center,
+                    text = text,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        lineHeight = MaterialTheme.typography.titleMedium.fontSize // Match font size and line height
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
-        // Calendar Grid Layout
-        Grid (
-            modifier = Modifier.fillMaxWidth(),
-            config = {repeat(7) { column(7.fr)} }
-        ){
-            weekDays.forEach { day ->
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        modifier = Modifier.padding(8.dp),
-                        textAlign = TextAlign.Center,
-                        text = day,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+        weekDays.forEach { day ->
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+                    textAlign = TextAlign.Center,
+                    text = day,
+                    fontWeight = FontWeight.Bold
+                )
             }
+        }
 
-            days.forEach { date ->
-                DayCell(date=date, isSelected = date == localDate)
-            }
+        days.forEach { date ->
+            DayCell(date = date, isSelected = date == localDate)
         }
     }
 }
@@ -154,16 +240,21 @@ fun AppCalendar(localDate: LocalDate) {
 fun DayCell(date: LocalDate?, isSelected: Boolean) {
     Box(
         modifier = Modifier
-            .background(
-                color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
-                shape = CircleShape
-            ),
+//            .fillMaxWidth()
+//            .background(
+//                color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
+//                shape = CircleShape
+//            ),
     ) {
         if (date != null) {
             Text(
                 modifier = Modifier
                     .padding(8.dp)
-                    .fillMaxWidth(),
+                    .fillMaxSize()
+                    .background(
+                        color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
+                        shape = CircleShape
+                    ),
                 textAlign = TextAlign.Center,
                 text = date.dayOfMonth.toString(),
                 style = MaterialTheme.typography.bodyMedium,
