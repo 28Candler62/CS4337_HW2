@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -44,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import com.example.hw2.ui.theme.HW2Theme
 import java.time.LocalDate
 import java.time.YearMonth
+import java.time.format.DateTimeFormatter
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -63,10 +65,15 @@ class MainActivity : ComponentActivity() {
 @PreviewScreenSizes
 @Composable
 fun HW2App() {
+    val landscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+    var topBarHeight = 80.dp
+    if (landscape) { topBarHeight = 56.dp}
+
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+//        modifier = Modifier,//.fillMaxSize(),
         topBar = {
             CenterAlignedTopAppBar(
+                modifier = Modifier.heightIn(max = topBarHeight),
                 title= {
                     Text(
                         text = stringResource(R.string.app_name),
@@ -212,7 +219,8 @@ fun getDaysOfMonth(yearMonth: YearMonth): List<LocalDate?> {
 fun AppCalendar(localDate: LocalDate, modifier: Modifier = Modifier) {
     val days: List<LocalDate?> = getDaysOfMonth(YearMonth.from(localDate))
     val weekDays = stringArrayResource(R.array.weekDays)
-    val calTitle = arrayOf("<", YearMonth.from(localDate).toString(), ">")
+    val fullFormatter = DateTimeFormatter.ofPattern("MMMM uuuu")
+    val calTitle = arrayOf("<", YearMonth.from(localDate).format(fullFormatter), ">")
 
     Box(
         modifier = modifier.fillMaxWidth(),
