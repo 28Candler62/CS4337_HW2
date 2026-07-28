@@ -18,7 +18,7 @@ To be specific,
 - The calendar shows your submission date (5 pts)
 - The screenshots of running the App (i.e. the left and the middle) (30 pts).
 
-[HW2 three screenshoots example](images/hw2_example.png)
+![HW2 three screenshoots example](images/hw2_example.png)
 
 ## Implementation Notes
 
