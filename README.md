@@ -18,4 +18,26 @@ To be specific,
 - The calendar shows your submission date (5 pts)
 - The screenshots of running the App (i.e. the left and the middle) (30 pts).
 
-![HW2 three screenshoots example](images/hw2_example.png)
+[HW2 three screenshoots example](images/hw2_example.png)
+
+## Implementation Notes
+
+Although the original assignment requested an XML layout using the Android View system, this project was implemented using **Jetpack Compose**, which is Google's recommended modern UI toolkit for Android development. The interface replicates the required calculator and calendar layout while using declarative Compose components instead of XML layouts.
+
+In addition to the original assignment requirements, the application includes the following improvements:
+
+- **Responsive layout:** The UI adapts correctly to both portrait and landscape orientations, maintaining the required layout and spacing after screen rotation.
+- **Display cutout (camera) support:** The top app bar and content are positioned to avoid overlap with devices that have a centered front-facing camera (display cutout), ensuring the title remains visible and properly aligned.
+- **Modern Android practices:** The project uses Compose layouts, Material components, and state management rather than the legacy View-based approach.
+
+### Deliverables
+
+The project includes:
+- A Jetpack Compose implementation of the required interface.
+- Screenshots of the application running in portrait mode.
+- Screenshots of the application running in landscape mode after device rotation.
+- Screenshots of the application displayed in the Android app switcher/background.
+
+[Screenshoot: preview in portrait mode](images/Preview_Portrait.png) [Screenshoot: emulator in portrait mode](images/Emulator_Portrate.png) [Screenshoot: emulator in app switcher](images/Emulator_Selector.png)
+[Screenshoot: emulator in landscape mode](images/Emulator_Landscape.png)
+[Screenshoot: preview in landscape mode](images/Preview_Landscape.png)
