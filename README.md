@@ -38,6 +38,6 @@ The project includes:
 - Screenshots of the application running in landscape mode after device rotation.
 - Screenshots of the application displayed in the Android app switcher/background.
 
-[Screenshoot: preview in portrait mode](images/Preview_Portrait.png) [Screenshoot: emulator in portrait mode](images/Emulator_Portrate.png) [Screenshoot: emulator in app switcher](images/Emulator_Selector.png)
-[Screenshoot: emulator in landscape mode](images/Emulator_Landscape.png)
-[Screenshoot: preview in landscape mode](images/Preview_Landscape.png)
+![Screenshoot: preview in portrait mode](images/Preview_Portrait.png) ![Screenshoot: emulator in portrait mode](images/Emulator_Portrate.png) ![Screenshoot: emulator in app switcher](images/Emulator_Selector.png)
+![Screenshoot: emulator in landscape mode](images/Emulator_Landscape.png)
+![Screenshoot: preview in landscape mode](images/Preview_Landscape.png)
